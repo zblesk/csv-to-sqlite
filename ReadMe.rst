@@ -6,4 +6,4 @@ This is a simple script that takes CSV files as input and copies their contents 
 
 To find out more, run
 
-csv-to-sqlite --help
+.. csv-to-sqlite --help
