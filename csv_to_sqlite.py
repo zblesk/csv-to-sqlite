@@ -101,7 +101,7 @@ class CsvFileInfo:
               default=False)
 def start(file, output, find_types, drop_tables, verbose):
     """A script that processes the input CSV files and copies them into a SQLite database.
-    Each file is copied into a separate table.
+    Each file is copied into a separate table. Column names are taken from the headers (first row) in the csv file.
 
     If file names are passed both via the --file option and standard input, all of them are processed.
 
