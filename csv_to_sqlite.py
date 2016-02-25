@@ -108,7 +108,7 @@ def start(file, output, find_types, drop_tables, verbose):
     For example in PowerShell, if you want to copy all the csv files in the current folder
     into a database called "out.db", type:
 
-        ls *.csv | % FullName | converter -o out.db
+        ls *.csv | % FullName | csv-to-sqlite -o out.db
     """
     write_out.verbose = verbose
     files = list(file)
