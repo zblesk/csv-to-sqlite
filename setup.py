@@ -8,8 +8,8 @@ with open(path.join(here, 'ReadMe.rst'), encoding='utf-8') as f:
 
 setup(
     name='csv-to-sqlite',
-    version='1.0.0',
-    description='An utility that copies csv files into a SQLite database',
+    version='1.0.1',
+    description='A utility that copies csv files into a SQLite database',
     py_modules=['csv_to_sqlite'],
     long_description=long_description,
     url='https://github.com/zblesk/csv-to-sqlite',
