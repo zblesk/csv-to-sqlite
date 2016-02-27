@@ -3,7 +3,9 @@ csv-to-sqlite
 
 This is a simple script that takes CSV files as input and copies their contents into a SQLite database. (Column names are taken from the headers (first row) in the csv file.)
 
-Installs via `pip install csv-to-sqlite`.
+Installs via 
+
+ pip install csv-to-sqlite
 
 To find out more, run
 
