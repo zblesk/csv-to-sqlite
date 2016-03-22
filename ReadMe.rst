@@ -1,7 +1,9 @@
 csv-to-sqlite
 =======================
 
-This is a simple script that takes CSV files as input and copies their contents into a SQLite database. (Column names are taken from the headers (first row) in the csv file.)
+This is a simple script that takes CSV files as input and copies their contents into a SQLite database. (Column names are taken from the headers (first row) in the csv file.) 
+
+Source: [GitHub](https://github.com/zblesk/csv-to-sqlite)
 
 Installs via 
 
