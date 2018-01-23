@@ -7,7 +7,7 @@ Intended for **Python 3**. (I know it *did* run on Py2 as some people tried, but
 
 Source: https://github.com/zblesk/csv-to-sqlite  
 
-PyPI: https://pypi.python.org/pypi/csv-to-sqlite  
+PyPI: https://pypi.org/project/csv-to-sqlite/  
 
 Related blog post + how-to: http://zblesk.net/blog/csv-to-sqlite/  
 

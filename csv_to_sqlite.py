@@ -1,3 +1,4 @@
+"""A script that processes the input CSV files and copies them into a SQLite database."""
 import csv
 import sqlite3
 import os
@@ -5,6 +6,8 @@ import sys
 import click
 import time
 
+
+__version__ = '1.0.2'
 
 def write_out(msg):
     if write_out.verbose:

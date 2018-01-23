@@ -1,0 +1,28 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "csv_to_sqlite"
+dist-name = "csv-to-sqlite"
+author = "Ladislav Benc"
+author-email = "ladislav.benc@protonmail.com"
+home-page = "https://github.com/zblesk/csv-to-sqlite"
+requires = ["click"]
+description-file = "ReadMe.rst"
+classifiers = [
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Topic :: Utilities',
+    ]
+requires-python = ">=3"
+keywords="csv sqlite conversion copy tool"
+
+[tool.flit.scripts]
+csv-to-sqlite = "csv_to_sqlite:start"
