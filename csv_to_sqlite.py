@@ -104,7 +104,7 @@ class CsvFileInfo:
               help="Determines whether progress reporting messages should be printed",
               default=False)
 @click.option("--delimiter", "-x",
-              help="Determines whether progress reporting messages should be printed",
+              help="Choose the CSV delimiter. Defaults to comma.",
               default=",")
 def start(file, output, find_types, drop_tables, verbose, delimiter):
     """A script that processes the input CSV files and copies them into a SQLite database.
