@@ -7,7 +7,7 @@ import click
 import time
 
 
-__version__ = '1.0.2'
+__version__ = '1.1.1'
 
 def write_out(msg):
     if write_out.verbose:
@@ -104,7 +104,7 @@ class CsvFileInfo:
               help="Determines whether progress reporting messages should be printed",
               default=False)
 @click.option("--delimiter", "-x",
-              help="Choose the CSV delimiter. Defaults to comma.",
+              help="Choose the CSV delimiter. Defaults to comma. Hint: for tabs, in Bash use $'\\t'.",
               default=",")
 def start(file, output, find_types, drop_tables, verbose, delimiter):
     """A script that processes the input CSV files and copies them into a SQLite database.
