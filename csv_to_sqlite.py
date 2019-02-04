@@ -15,10 +15,11 @@ def write_out(msg):
 
 
 class CsvOptions:
-    def __init__(self, determine_column_types=True, drop_tables=False):
+    def __init__(self, determine_column_types=True, 
+                 drop_tables=False, delimiter=","):
         self.determine_column_types = determine_column_types
         self.drop_tables = drop_tables
-
+        self.delimiter = delimiter
 
 class CsvFileInfo:
     def __init__(self, path, options = None):
@@ -48,7 +49,7 @@ class CsvFileInfo:
 
     def process_file(self):
         with open(self.path, encoding="utf8") as csvfile:
-            rdr = csv.reader(csvfile)
+            rdr = csv.reader(csvfile, delimiter=self.options.delimiter)
             self.columnNames = [name for name in next(rdr)]
             cols = len(self.columnNames)
             self.columnTypes = ["string"] * cols if not self.options.determine_column_types  else ["integer"] * cols
@@ -102,7 +103,10 @@ class CsvFileInfo:
               is_flag=True,
               help="Determines whether progress reporting messages should be printed",
               default=False)
-def start(file, output, find_types, drop_tables, verbose):
+@click.option("--delimiter", "-x",
+              help="Choose the CSV delimiter. Defaults to comma.",
+              default=",")
+def start(file, output, find_types, drop_tables, verbose, delimiter):
     """A script that processes the input CSV files and copies them into a SQLite database.
     Each file is copied into a separate table. Column names are taken from the headers (first row) in the csv file.
 
@@ -122,7 +126,7 @@ def start(file, output, find_types, drop_tables, verbose):
         return
     write_out("Output file: " + output)
     conn = sqlite3.connect(output)
-    defaults = CsvOptions(determine_column_types=find_types, drop_tables=drop_tables)
+    defaults = CsvOptions(determine_column_types=find_types, drop_tables=drop_tables, delimiter=delimiter)
     totalRowsInserted = 0
     startTime = time.clock()
     with click.progressbar(files) as _files:
