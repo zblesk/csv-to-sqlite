@@ -7,7 +7,7 @@ import click
 import time
 
 
-__version__ = '1.1.1'
+__version__ = '1.2.0'
 
 def write_out(msg):
     if write_out.verbose:
@@ -128,7 +128,7 @@ def start(file, output, find_types, drop_tables, verbose, delimiter):
     conn = sqlite3.connect(output)
     defaults = CsvOptions(determine_column_types=find_types, drop_tables=drop_tables, delimiter=delimiter)
     totalRowsInserted = 0
-    startTime = time.clock()
+    startTime = time.perf_counter()
     with click.progressbar(files) as _files:
         actual = files if verbose else _files
         for file in actual:
@@ -140,7 +140,7 @@ def start(file, output, find_types, drop_tables, verbose, delimiter):
                 totalRowsInserted += info.save_to_db(conn)
             except Exception as exc:
                 print("Error on table {0}: \n {1}".format(info.get_table_name(), exc))
-    print("Written {0} rows into {1} tables in {2:.3f} seconds".format(totalRowsInserted, len(files), time.clock() - startTime))
+    print("Written {0} rows into {1} tables in {2:.3f} seconds".format(totalRowsInserted, len(files), time.perf_counter() - startTime))
     conn.commit()
 
 if __name__ == "__main__":
