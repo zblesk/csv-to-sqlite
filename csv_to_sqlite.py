@@ -7,7 +7,7 @@ import click
 import time
 
 
-__version__ = '1.2.0'
+__version__ = '2.0.0'
 
 def write_out(msg):
     if write_out.verbose:
@@ -15,9 +15,9 @@ def write_out(msg):
 
 
 class CsvOptions:
-    def __init__(self, determine_column_types=True, 
+    def __init__(self, typing_style=True, 
                  drop_tables=False, delimiter=","):
-        self.determine_column_types = determine_column_types
+        self.typing_style = typing_style
         self.drop_tables = drop_tables
         self.delimiter = delimiter
 
@@ -66,7 +66,10 @@ class CsvFileInfo:
         rdr = self.get_restarted_reader()
         self.columnNames = [name for name in next(rdr)]
         cols = len(self.columnNames)
-        self.columnTypes = ["string"] * cols if not self.options.determine_column_types  else ["integer"] * cols
+        if self.options.typing_style == 'none':
+            self.columnTypes = ["text"] * cols
+            return
+        self.columnTypes = ["integer"] * cols
         for row in rdr:
             for col in range(cols):
                 if self.columnTypes[col] == "text":
@@ -76,6 +79,8 @@ class CsvFileInfo:
                     if col_type == "text" or \
                             (col_type == "real" and self.columnTypes[col] == "integer"):
                         self.columnTypes[col] = col_type
+            if self.options.typing_style == 'quick':
+                break;
 
     def save_to_db(self, connection):
         write_out("Writing table " + self.get_table_name())
@@ -86,14 +91,16 @@ class CsvFileInfo:
                 connection.execute('drop table [{tableName}]'.format(tableName=self.get_table_name()))
             except:
                 pass
-        connection.execute('create table [{tableName}] (\n'.format(tableName=self.get_table_name()) +
-                           ',\n'.join("\t[%s] %s" % (i[0], i[1]) for i in zip(self.columnNames, self.columnTypes)) +
-                           '\n);')
+        createQuery = 'create table [{tableName}] (\n'.format(tableName=self.get_table_name()) \
+            + ',\n'.join("\t[%s] %s" % (i[0], i[1]) for i in zip(self.columnNames, self.columnTypes)) \
+            + '\n);'
+        write_out(createQuery)
+        connection.execute(createQuery)
         linesTotal = 0
         currentBatch = 0
         reader = self.get_restarted_reader()
         buf = []
-        maxL = 1000
+        maxL = 10001
         next(reader) #skip headers
         for line in reader:
             buf.append(line)
@@ -118,9 +125,13 @@ class CsvFileInfo:
 @click.option("--output", "-o", help="The output database path",
               type=click.Path(),
               default=os.path.basename(os.getcwd()) + ".db")
-@click.option("--find-types/--no-types",
-              help="Determines whether the script should guess the column type (int/float/string supported)",
-              default=True)
+@click.option('--typing', "-t", 
+              type=click.Choice(['full', 'quick', 'none']),
+              help="""Determines whether the script should guess the column type (int/float/string supported).
+quick: only base the types on the first line
+full: read the entire file
+none: no typing, every column is string""",
+              default='quick')
 @click.option("--drop-tables/--no-drop-tables", "-D",
               help="Determines whether the tables should be dropped before creation, if they already exist"
                    "(BEWARE OF DATA LOSS)",
@@ -132,7 +143,7 @@ class CsvFileInfo:
 @click.option("--delimiter", "-x",
               help="Choose the CSV delimiter. Defaults to comma. Hint: for tabs, in Bash use $'\\t'.",
               default=",")
-def start(file, output, find_types, drop_tables, verbose, delimiter):
+def start(file, output, typing, drop_tables, verbose, delimiter):
     """A script that processes the input CSV files and copies them into a SQLite database.
     Each file is copied into a separate table. Column names are taken from the headers (first row) in the csv file.
 
@@ -152,7 +163,8 @@ def start(file, output, find_types, drop_tables, verbose, delimiter):
         return
     write_out("Output file: " + output)
     conn = sqlite3.connect(output)
-    defaults = CsvOptions(determine_column_types=find_types, drop_tables=drop_tables, delimiter=delimiter)
+    defaults = CsvOptions(typing_style=typing, drop_tables=drop_tables, delimiter=delimiter)
+    write_out("Typing style: " + typing)
     totalRowsInserted = 0
     startTime = time.perf_counter()
     with click.progressbar(files) as _files:
