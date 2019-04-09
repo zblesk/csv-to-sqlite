@@ -70,6 +70,10 @@ class CsvFileInfo:
             self.columnTypes = ["text"] * cols
             return
         self.columnTypes = ["integer"] * cols
+        # for primary id with auto-incremente 
+        for index, column in enumerate(self.columnNames):
+            if column == 'id':
+                self.columnTypes[index] = "integer PRIMARY KEY"
         for row in rdr:
             for col in range(cols):
                 if self.columnTypes[col] == "text":
