@@ -100,7 +100,7 @@ class CsvFileInfo:
         currentBatch = 0
         reader = self.get_restarted_reader()
         buf = []
-        maxL = 10001
+        maxL = 10000
         next(reader) #skip headers
         for line in reader:
             buf.append(line)
@@ -113,6 +113,12 @@ class CsvFileInfo:
                 linesTotal += currentBatch
                 currentBatch = 0
                 buf = []
+        if len(buf) > 0:
+            write_out("Flushing the remaining {0} records into {1}".format(len(buf), self.get_table_name()))
+            connection.executemany('insert into [{tableName}] values ({cols})'
+                                   .format(tableName=self.get_table_name(), cols=','.join(['?'] * cols)),
+                                   buf)
+            linesTotal += len(buf)
         return linesTotal
 
 
@@ -134,7 +140,7 @@ none: no typing, every column is string""",
               default='quick')
 @click.option("--drop-tables/--no-drop-tables", "-D",
               help="Determines whether the tables should be dropped before creation, if they already exist"
-                   "(BEWARE OF DATA LOSS)",
+                   " (BEWARE OF DATA LOSS)",
               default=False)
 @click.option("--verbose", "-v",
               is_flag=True,
