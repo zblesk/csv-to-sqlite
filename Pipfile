@@ -6,15 +6,15 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-certifi
-chardet
-click
-docutils
-flit
-idna
-pytoml
-requests
-urllib3 
+certifi = "==2018.11.29"
+chardet = "==3.0.4"
+click = "==7.0"
+docutils = "==0.14"
+flit = "==1.2.1"
+idna = "==2.8"
+pytoml = "==0.1.20"
+requests = "==2.21.0"
+urllib3 = "==1.24.1"
 
 [requires]
 python_version = "3.8"
