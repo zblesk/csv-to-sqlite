@@ -7,7 +7,7 @@ import click
 import time
 
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 
 def write_out(msg):
     if write_out.verbose:
@@ -15,11 +15,16 @@ def write_out(msg):
 
 
 class CsvOptions:
-    def __init__(self, typing_style=True, 
-                 drop_tables=False, delimiter=","):
+    def __init__(self, 
+                 typing_style=True, 
+                 drop_tables=False, 
+                 delimiter=",",
+                 encoding="utf8"):
         self.typing_style = typing_style
         self.drop_tables = drop_tables
         self.delimiter = delimiter
+        self.encoding = encoding
+
 
 class CsvFileInfo:
     def __init__(self, path, options = None):
@@ -49,7 +54,7 @@ class CsvFileInfo:
         return "text"
 
     def __enter__(self):
-        self.csvfile = open(self.path, encoding="utf8") 
+        self.csvfile = open(self.path, encoding=self.options.encoding) 
         self.reader = csv.reader(self.csvfile, delimiter=self.options.delimiter)
         return self
 
@@ -80,7 +85,7 @@ class CsvFileInfo:
                             (col_type == "real" and self.columnTypes[col] == "integer"):
                         self.columnTypes[col] = col_type
             if self.options.typing_style == 'quick':
-                break;
+                break
 
     def save_to_db(self, connection):
         write_out("Writing table " + self.get_table_name())
@@ -149,7 +154,11 @@ none: no typing, every column is string""",
 @click.option("--delimiter", "-x",
               help="Choose the CSV delimiter. Defaults to comma. Hint: for tabs, in Bash use $'\\t'.",
               default=",")
-def start(file, output, typing, drop_tables, verbose, delimiter):
+@click.option("--encoding", "-e",
+              help="Choose the input CSV's file encoding. Use the string identifier Python uses to specify encodings, e.g. 'windows-1250'.",
+              default="utf8")
+
+def start(file, output, typing, drop_tables, verbose, delimiter, encoding):
     """A script that processes the input CSV files and copies them into a SQLite database.
     Each file is copied into a separate table. Column names are taken from the headers (first row) in the csv file.
 
@@ -165,11 +174,11 @@ def start(file, output, typing, drop_tables, verbose, delimiter):
     if not sys.stdin.isatty():
         files.extend(list(sys.stdin))
     if not files:
-        write_out("No files were specified. Exiting.")
+        print("No files were specified. Exiting.")
         return
     write_out("Output file: " + output)
     conn = sqlite3.connect(output)
-    defaults = CsvOptions(typing_style=typing, drop_tables=drop_tables, delimiter=delimiter)
+    defaults = CsvOptions(typing_style=typing, drop_tables=drop_tables, delimiter=delimiter, encoding=encoding)
     write_out("Typing style: " + typing)
     totalRowsInserted = 0
     startTime = time.perf_counter()
@@ -183,7 +192,7 @@ def start(file, output, typing, drop_tables, verbose, delimiter):
                     info.determine_types()
                     totalRowsInserted += info.save_to_db(conn)
             except Exception as exc:
-                print("Error on table {0}: \n {1}".format(info.get_table_name(), exc))
+                print("Error on table {0}: \n {1}".format(file, exc))
     print("Written {0} rows into {1} tables in {2:.3f} seconds".format(totalRowsInserted, len(files), time.perf_counter() - startTime))
     conn.commit()
 
