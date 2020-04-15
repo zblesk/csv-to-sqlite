@@ -16,7 +16,7 @@ def write_out(msg):
 
 class CsvOptions:
     def __init__(self, 
-                 typing_style=True, 
+                 typing_style="quick", 
                  drop_tables=False, 
                  delimiter=",",
                  encoding="utf8"):
@@ -176,19 +176,23 @@ def start(file, output, typing, drop_tables, verbose, delimiter, encoding):
     if not files:
         print("No files were specified. Exiting.")
         return
+    options = CsvOptions(typing_style=typing, drop_tables=drop_tables, delimiter=delimiter, encoding=encoding)
+    write_csv(files, output, options)
+
+
+def write_csv(files, output, options):
     write_out("Output file: " + output)
     conn = sqlite3.connect(output)
-    defaults = CsvOptions(typing_style=typing, drop_tables=drop_tables, delimiter=delimiter, encoding=encoding)
-    write_out("Typing style: " + typing)
+    write_out("Typing style: " + options.typing_style)
     totalRowsInserted = 0
     startTime = time.perf_counter()
     with click.progressbar(files) as _files:
-        actual = files if verbose else _files
+        actual = files if write_out.verbose else _files
         for file in actual:
             try:
                 file = file.strip()
                 write_out("Processing " + file)
-                with CsvFileInfo(file, defaults) as info:
+                with CsvFileInfo(file, options) as info:
                     info.determine_types()
                     totalRowsInserted += info.save_to_db(conn)
             except Exception as exc:
@@ -198,3 +202,5 @@ def start(file, output, typing, drop_tables, verbose, delimiter, encoding):
 
 if __name__ == "__main__":
     start()
+else:
+    write_out.verbose = False
