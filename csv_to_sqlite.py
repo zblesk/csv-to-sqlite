@@ -19,11 +19,13 @@ class CsvOptions:
                  typing_style="quick", 
                  drop_tables=False, 
                  delimiter=",",
-                 encoding="utf8"):
+                 encoding="utf8",
+                 bracket_style="all"):
         self.typing_style = typing_style
         self.drop_tables = drop_tables
         self.delimiter = delimiter
         self.encoding = encoding
+        self.bracket_style = bracket_style
 
 
 class CsvFileInfo:
@@ -36,6 +38,7 @@ class CsvFileInfo:
         self.options = options
         if not options:
             self.options = CsvOptions()
+        self.lb, self.rb = ("[", "]") if options.bracket_style == "all" else ("", "")
 
     def get_table_name(self):
         return os.path.splitext(os.path.basename(self.path))[0]
@@ -97,7 +100,7 @@ class CsvFileInfo:
             except:
                 pass
         createQuery = 'create table [{tableName}] (\n'.format(tableName=self.get_table_name()) \
-            + ',\n'.join("\t[%s] %s" % (i[0], i[1]) for i in zip(self.columnNames, self.columnTypes)) \
+            + ',\n'.join("\t%s%s%s %s" % (self.lb, i[0], self.rb, i[1]) for i in zip(self.columnNames, self.columnTypes)) \
             + '\n);'
         write_out(createQuery)
         connection.execute(createQuery)
@@ -157,8 +160,16 @@ none: no typing, every column is string""",
 @click.option("--encoding", "-e",
               help="Choose the input CSV's file encoding. Use the string identifier Python uses to specify encodings, e.g. 'windows-1250'.",
               default="utf8")
+@click.option('--bracket-style', 
+              type=click.Choice(['all', 'none']),
+              help="""Determines whether all the column names should be wrapped in brackets, or none of them should be.
+Keep in mind that if you select 'none', it is up to you to ensure the CSV's column names are also valid SQLite column names.
 
-def start(file, output, typing, drop_tables, verbose, delimiter, encoding):
+all: wrap all.
+none: no brackets""",
+              default='all')
+
+def start(file, output, typing, drop_tables, verbose, delimiter, encoding, bracket_style):
     """A script that processes the input CSV files and copies them into a SQLite database.
     Each file is copied into a separate table. Column names are taken from the headers (first row) in the csv file.
 
@@ -176,7 +187,7 @@ def start(file, output, typing, drop_tables, verbose, delimiter, encoding):
     if not files:
         print("No files were specified. Exiting.")
         return
-    options = CsvOptions(typing_style=typing, drop_tables=drop_tables, delimiter=delimiter, encoding=encoding)
+    options = CsvOptions(typing_style=typing, drop_tables=drop_tables, delimiter=delimiter, encoding=encoding, bracket_style=bracket_style)
     write_csv(files, output, options)
 
 
