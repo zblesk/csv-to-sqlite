@@ -9,7 +9,7 @@ author = "Ladislav Benc"
 author-email = "ladislav.benc@protonmail.com"
 home-page = "https://github.com/zblesk/csv-to-sqlite"
 requires = ["click"]
-description-file = "ReadMe.rst"
+description-file = "ReadMe.md"
 classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -20,6 +20,7 @@ classifiers = [
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Utilities',
     ]
 requires-python = ">=3"
