@@ -210,6 +210,7 @@ def write_csv(files, output, options):
                 print("Error on table {0}: \n {1}".format(file, exc))
     print("Written {0} rows into {1} tables in {2:.3f} seconds".format(totalRowsInserted, len(files), time.perf_counter() - startTime))
     conn.commit()
+    return totalRowsInserted
 
 if __name__ == "__main__":
     start()
