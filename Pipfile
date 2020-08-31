@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 e1839a8 = {editable = true,path = "."}
+pytest = "*"
 
 [packages]
 certifi = "*"
