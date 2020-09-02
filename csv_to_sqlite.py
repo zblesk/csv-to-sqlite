@@ -7,7 +7,7 @@ import click
 import time
 
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 
 def write_out(msg):
     if write_out.verbose:
@@ -192,6 +192,7 @@ def start(file, output, typing, drop_tables, verbose, delimiter, encoding, brack
 
 
 def write_csv(files, output, options):
+    """Writes CSV files. Returns number of rows inserted."""
     write_out("Output file: " + output)
     conn = sqlite3.connect(output)
     write_out("Typing style: " + options.typing_style)
