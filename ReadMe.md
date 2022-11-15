@@ -1,7 +1,7 @@
 csv-to-sqlite
 =============
 
-This is a simple script that takes CSV files as input and copies their contents into a SQLite database. .
+This is a simple, **datatype-guessing** script that takes CSV files as input and copies their contents into a SQLite database. .
 (Column names are taken from the headers (first row) in the csv file.) 
 Intended for **Python 3**. (I know it *did* run on Py2 as some people tried, but I haven't tested it.)
 
