@@ -5,14 +5,14 @@ from os import path
 
 def test_csv_script():
     options = csv_to_sqlite.CsvOptions(typing_style="quick", drop_tables=True) 
-    input_files = ["tests\\data\\abilities.csv"] 
+    input_files = ["tests/data/abilities.csv"] 
     total = csv_to_sqlite.write_csv(input_files, "test_out.sqlite", options)
     assert total == 293
     assert path.exists("test_out.sqlite")
 
 def test_csv_basic():
     options = csv_to_sqlite.CsvOptions(typing_style="quick", drop_tables=True) 
-    input_files = ["tests\\data\\abilities.csv", "tests\\data\\moves.csv", "tests\\data\\natures.csv"] 
+    input_files = ["tests/data/abilities.csv", "tests/data/moves.csv", "tests/data/natures.csv"] 
     total = csv_to_sqlite.write_csv(input_files, "multiple.sqlite", options)
     assert total == 1064
     assert path.exists("multiple.sqlite")
