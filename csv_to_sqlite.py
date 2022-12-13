@@ -7,7 +7,7 @@ import click
 import time
 
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 
 def write_out(msg):
     if write_out.verbose:
